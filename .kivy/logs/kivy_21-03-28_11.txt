@@ -1,0 +1,11 @@
+[INFO   ] Logger: Record log in /storage/emulated/0/projects/GuideTheBall_1/.kivy/logs/kivy_21-03-28_11.txt
+[INFO   ] Kivy: v2.0.0
+[INFO   ] Kivy: Installed at "/data/user/0/ru.iiec.pydroid3/files/arm-linux-androideabi/lib/python3.7/site-packages/Kivy-2.0.0-py3.7-linux-armv7l.egg/kivy/__init__.py"
+[INFO   ] Python: v3.7.2 (default, Mar 20 2019, 14:25:26) 
+[GCC 8.2.0]
+[INFO   ] Python: Interpreter at ""
+[INFO   ] Image: Providers: img_tex, img_dds, img_pil (img_sdl2, img_ffpyplayer ignored)
+[WARNING] stderr: Traceback (most recent call last):
+[WARNING] stderr:   File "/storage/emulated/0/projects/GuideTheBall_1/glowingLineShader.py", line 50, in <module>
+[WARNING] stderr:     class GlowingLine(Canvas):
+[WARNING] stderr: TypeError: multiple bases have instance lay-out conflict

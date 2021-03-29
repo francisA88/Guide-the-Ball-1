@@ -1,0 +1,236 @@
+#rgba(48,215,69,1)
+#:set BASE_RED get_color_from_hex("#CC1414")
+#:import Animation kivy.animation.Animation
+
+<GlowingLine>:
+	
+<W@StencilView+FloatLayout>:
+	
+<FlatBtn@Button>:
+	background_down: ""
+	background_normal: ""
+	background_disabled: ""
+<MyLabel@FlatBtn>:
+	font_name: os.path.join('fonts','font_19.ttf')
+	markup: True
+	size_hint: None, None
+	on_texture:
+		exec("if args[1]: self.size=args[1].size")
+	background_color: 1,1,1,0
+	
+<PauseBtn@Button>:
+	background_down: os.path.join('res', 'pause_btn_1.png')
+	background_normal: os.path.join('res', 'pause_btn_1.png')
+	background_disabled: os.path.join('res', 'pause_btn_1.png')
+	size_hint: None, None
+
+<CloseBtn@PauseBtn>:
+	background_down: ''
+	background_normal: ""
+	background_disabled: ""
+	background_color: 0,0,0,0
+	color: BASE_RED
+	font_name: "fonts/mdicons.ttf"
+	text: "\uF15A"
+	font_size: 34
+	canvas.before:
+		Color:
+			rgba: BLUE_GREY
+		Ellipse:
+			size: self.size
+			pos: self.pos
+			
+<Pipe@Widget>:
+	size_hint: None, None
+	Button:
+		background_normal: os.path.join('res', 'pipe_texture.png')
+		background_down: os.path.join('res', 'pipe_texture.png')
+		background_disabled: os.path.join('res', 'pipe_texture.png')
+		size: root.width/1.5, root.height*2/3
+		pos: root.center_x - (root.width/3), root.y
+	Button:
+		background_normal: os.path.join('res','pipe_texture.png')
+		background_down: os.path.join('res','pipe_texture.png')
+		background_disabled: os.path.join('res','pipe_texture.png')
+		pos: root.x, root.y+(root.height*2/3)
+		size: root.width, root.height*1/3
+
+<WPC@PauseItem>:
+	text: "[font=fonts/mdicons.ttf]\uF15A[/font] QUIT"
+	markup: True
+	font_size: 24
+	
+<LPC@BoxLayout>:
+	orientation: 'vertical'
+	PauseItem:
+		text: "[font=fonts/mdicons.ttf]\uF450[/font] Retry?"
+		font_size: 34
+		markup: True
+	PauseItem:
+		text: "Quit"
+		on_press: app.mm.current = "levels"
+		
+<WinPopup@Popup>:
+	title: 'You win!'
+	title_color: BASE_RED
+	title_font: "fonts/font_19.ttf"
+	title_size: 28
+	title_align: 'center'
+	separator_height: 0
+	#background: "res/screenbg_1.png"
+	background_color: [0,]*4
+	width: 200
+	height: 150
+	size_hint: None, None
+	auto_dismiss: False
+	pos_hint: {"center_x": .5, "center_y":.5}
+	PauseItem:
+		text: "[font=fonts/mdicons.ttf]\uF15A[/font] QUIT"
+		markup: True
+		font_size: 24
+		on_press:
+			app.mm.current = "levels"
+			root.dismiss()
+	
+<LosePopup@Popup>:
+	title: 'You definitely lost!'
+	title_color: BASE_RED
+	title_font: "fonts/font_19.ttf"
+	title_size: 28
+	title_align: 'center'
+	separator_height: 0
+	#background: "res/screenbg_1.png"
+	background_color: [0,]*4
+	height: 200
+	width: 300
+	size_hint: None, None
+	auto_dismiss: False
+	#content: Factory.LPC()
+	BoxLayout:
+		orientation: 'vertical'
+		PauseItem:
+			text: "[font=fonts/mdicons.ttf]\uF450[/font] Retry?"
+			font_size: 34
+			markup: True
+			on_press:
+				root.dismiss()
+				app.game.init_level(app.current_level)
+				app.resetStuff()
+				app.restore_play_btn()
+		PauseItem:
+			text: "Quit"
+			on_press:
+				root.dismiss()
+				app.mm.current = "levels"
+				app.resetStuff()
+				
+<InGameScreen@Screen>:
+	name: "igs"
+	on_enter:
+		app.highscore = app.db.getHighscoreForLevel(app.current_level)
+		hscr.text = "Highscore : "+str(app.highscore)
+		print("entered!")
+	canvas.before:
+		Rectangle:
+			size: self.size
+			source: os.path.join('res','screenbg_1.png')
+	W:
+		canvas:
+			#Color:
+	#			rgba: get_color_from_hex("#CC1414")
+			Rectangle:
+				source: os.path.join('res','topbar.png')
+				size: root.width, 150 if Window.height>590 else 100
+				pos: 0, root.top - (150 if Window.height>590 else 100)
+	
+	FloatLayout:
+		size_hint_x: 1
+		size_hint_y: None
+		height: 50
+		canvas:
+			Color:
+				rgb: 0,0,0 #.6, .3, .2
+			Rectangle:
+				size: root.width, self.height
+				pos: 0,0
+	Pipe:
+		pos: 60,0
+		height: 100
+		width: 100
+	PauseBtn:
+		id: pbtn
+		pos: 20, Window.height - (70 if Window.height<590 else 95)
+		size: 50,50
+		on_press:
+			app.game.is_paused = True
+			root.manager.current = "pm"
+	CloseBtn:
+		id: clbtn
+		pos: Window.width - 90, Window.height - (75 if Window.height<590 else 95)
+		size: 50,50
+		on_release:
+			root.manager.current = "levels"
+			app.resetStuff()
+	MyLabel:
+		text: "[i]GUIDE THE BALL![/i]"
+		id: title_text
+		font_size: 30
+		center_x: Window.center[0]-self.width/4
+		y: Window.height - self.height - 10
+		color: BLUE #get_color_from_hex("#CC1414")
+		outline_color: WHITE
+		outline_width: 3
+		#on_release: root.manager.current = "main-menu"
+	MyLabel:
+		text: "Score : "+str(app.score)
+		center_x: Window.center[0]
+		y: title_text.y - self.height - 5
+		color: BLUE
+		font_size: 24
+		outline_color: WHITE
+		outline_width: 3
+		#on_texture: self.width = args[1].width
+	MyLabel:
+		id: hscr
+		text: "Highscore : "+str(app.highscore)
+		pos_hint: {'right': .96}
+		font_size: 26
+		top: root.height -(70 if root.height<590 else 95) -10
+		color: WHITE
+		outline_color: BASE_RED
+		outline_width: 3
+	MyLabel:
+		timeleft: app.timeleft
+		text: "Time Left : "+str(self.timeleft)
+		pos_hint: {'right': .96}
+		font_size: 26
+		color: WHITE
+		outline_color: BASE_RED
+		outline_width: 3
+		top: hscr.y -10
+	PauseItem:
+		text: "\uF40A" #Play btn
+		size_hint: None, None
+		size: 60,60
+		pos: Window.width -80, 20
+		id: playbtn
+		font_name: os.path.join(os.path.join(".","fonts"), "mdicons.ttf")
+		font_size: 40
+		on_press:
+			#app.game.remove_ball()
+			#app.game.clear_all_lines()
+			app.game.addBall(app.ballname)
+			self.disabled = True
+			app.update_scores()
+			#Animation(width=0, height=0, opacity=0, duration=.5, pos=self.center).start(self)
+	PauseItem:
+		text: "\uF54C"
+		id: clear_prev
+		right: playbtn.x -8
+		y: playbtn.y
+		size_hint: None, None
+		size: 60,60
+		font_name: os.path.join(os.path.join(".","fonts"), "mdicons.ttf")
+		font_size: 40
+		on_press:
+			app.game.clear_prev_line()

@@ -1,0 +1,6 @@
+[INFO   ] Logger: Record log in /storage/emulated/0/projects/GuideTheBall_1/.kivy/logs/kivy_21-03-29_31.txt
+[INFO   ] Kivy: v2.0.0
+[INFO   ] Kivy: Installed at "/data/user/0/ru.iiec.pydroid3/files/arm-linux-androideabi/lib/python3.7/site-packages/Kivy-2.0.0-py3.7-linux-armv7l.egg/kivy/__init__.py"
+[INFO   ] Python: v3.7.2 (default, Mar 20 2019, 14:25:26) 
+[GCC 8.2.0]
+[INFO   ] Python: Interpreter at ""

@@ -1,0 +1,107 @@
+#:import ScrollEffect kivy.effects.scroll.ScrollEffect
+#:import ceil math.ceil
+
+<LevelButton@PauseItem>:
+	outline_width: 2
+	color: BASE_RED
+	font_size: 40
+	size_hint_y: None
+	height: 80
+	width: 80
+	minimum_width: 80
+	disabled: int(self.text if self.text else "0") not in app.unlocked_lvls #app.db.getLastUnlockedLevel()<int(self.text if self.text else "1")
+	on_release:
+		#app.game.clear_any_obstacles()
+		app.game.init_level(int(self.text))
+		app.current_level = int(self.text)
+		app.restore_play_btn()
+		app._timeleft = app.db.getTimeMaxLimitForLevel(app.current_level)
+		app.timeleft = app._timeleft
+		app.score = 6000 if app._timeleft <15 else 7000 if 15<=app._timeleft <21 else 8000
+		app.mm.current = "igs"
+		#Change "igs" to a "confirm play" screen
+<LevelsPanel@Screen>:
+	name: 'levels'
+	canvas.before:
+		Rectangle:
+			source: os.path.join('res','screenbg_1.png')
+			size: root.size
+			pos: root.pos
+	PauseItem:
+		font_name: "fonts/mdicons.ttf"
+		text: "\uF04D"
+		font_size: 34
+		size: 80, 40
+		pos: 10, root.top - self.height -10
+		size_hint: None, None
+		on_press:
+			root.manager.current = "main-menu"
+	OutlineLbl:
+		text: 'LEVELS'
+		center_x: Window.center[0]
+		top: Window.height
+		font_size: 45
+		id: lvls_title
+	ScrollView:
+		id: sc
+		do_scroll_x: False
+		width: Window.width*.7
+		height: 250
+		size_hint: None, None
+		pos_hint: {'center_x': .5, 'center_y':.5}
+		#top: lvls_title.y -12
+		bar_margin: -6
+		bar_color: BASE_RED #BLUE_GREY
+		bar_inactive_color: BASE_RED#BLUE_GREY
+		bar_width: 6
+		effect_cls: ScrollEffect
+		GridLayout:
+			id: gridarray
+			width: sc.width
+			size_hint: 1, None
+			height: ceil(len(self.children)/4)*80 + 20*ceil(len(self.children)/4-1)
+			spacing: 20
+			pos: sc.pos
+			rows: ceil(len(self.children)/4)
+			cols:  4
+			LevelButton:
+				text: "1"
+			LevelButton:
+				text: "2"
+			LevelButton:
+				text: "3"
+			LevelButton:
+				text: "4"
+			LevelButton:
+				text: "5"
+			LevelButton:
+				text: "6"
+			LevelButton:
+				text: "7"
+			LevelButton:
+				text: "8"
+			LevelButton:
+				text: "9"
+			LevelButton:
+				text: "10"
+			LevelButton:
+				text: "11"
+			LevelButton:
+				text: "12"
+			LevelButton:
+				text: "13"
+			LevelButton:
+				text: "14"
+			LevelButton:
+				text: "15"
+			LevelButton:
+				text: "16"
+			LevelButton:
+				text: "17"
+			LevelButton:
+				text: "18"
+			LevelButton:
+				text: "19"
+		#	cols: 4
+#			rows: ceil(len(self.children)/4)
+			#height: 50*self.rows +(10*self.rows-1)

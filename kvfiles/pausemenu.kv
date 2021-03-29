@@ -1,0 +1,78 @@
+<X@Button>:
+	background_down: ""
+	background_normal: ""
+	background_disabled: ""
+	background_color: RED
+	size: 40,40
+	size_hint: None, None
+	text: "\uF156"
+	font_name: os.path.join(os.path.join(".","fonts"), "mdicons.ttf")
+	
+			
+<PauseItem@Button>:
+	background_down: ""
+	background_normal: ""
+	background_disabled: ""
+	background_color: BLUE_GREY
+	on_press:
+		self.background_color = BLUE_GREY[:3]+[.7]
+	on_release:
+		self.background_color = BLUE_GREY
+	canvas:
+		Color:
+			rgb: BLUE# YELLOW# BASE_RED
+		Line:
+			points: self.x,self.y, self.x,self.y+self.height, self.x+self.width,self.y+self.height, self.x+self.width, self.y
+			width: 1.5
+			close: True
+		Color:
+			rgba: BLUE_A
+		Line:
+			points: self.x-1,self.y-1, self.x-1,self.y+self.height+2, self.x+self.width+2,self.y+self.height+2, self.x+self.width+2, self.y-1
+			width: 1
+			close: True
+			
+<PauseMenu@Screen>:
+	id: pm
+	name: "pm"
+	#size: 150, 100
+	#size_hint: None, None
+	#pos_hint: {"center_x": .5, "center_y": .5}
+	canvas.before:
+		Rectangle:
+			source: os.path.join('res','screenbg_1.png')
+			size: Window.size
+			pos: 0,0
+	canvas:
+		Color:
+			rgba: BLUE_GREY
+		Line:
+			points: [3,3, 3,Window.height-20, 20,Window.height-3, Window.width-20,Window.height-3, Window.width-3,Window.height-20, Window.width-3,3]
+			close: True
+			width: 3
+	#pos: Window.center
+	
+	BoxLayout:
+		id: options
+		orientation: "vertical"
+		spacing: 4
+		size: 150, 100
+		size_hint: None, None
+		pos_hint: {"center_x": .5, "center_y": .5}
+		#pos: pm.pos
+		PauseItem:
+			text: "Resume"
+			on_press:
+				root.manager.current = "igs"
+				app.game.is_paused = False
+		PauseItem:
+			text: "Quit"
+			on_press:
+				root.manager.current = "main-menu"
+				app.resetStuff()
+			
+	X:
+		pos: options.right -self.width, options.top+2
+		on_press:
+			root.manager.current="igs"
+			app.game.is_paused = False

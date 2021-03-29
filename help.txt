@@ -1,0 +1,9 @@
+[b]Guide The Ball is a game in which you have to use your creativity together with gravity to guide a ball into the tunnel at the bottom left of the game screen. 
+Once you click on the button with the play icon at the bottom right, a ball is spawned. Different balls have different characteristics: Bounciness, mass, and friction. After the ball is dropped, you’ll have to draw lines on the screen in order to guide ball to reach just above the tunnel where it disappears and you win!
+[color=#ff2223]Don't let the ball get off the screen or you lose!! If you run out of time you lose too![/color]
+
+The button next to the play button is the "undo" button. This deletes the last line you drew on the screen if any.
+
+[u]A LITTLE HINT[/u]::: Use the lines you draw to move the ball. [/b]
+
+[b]If you do find any unexpected or strange behaviour that you think shouldn’t be, please do email me the issue at [color=#2288aa]francisali694@gmail.com[/color]

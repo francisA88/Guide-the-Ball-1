@@ -1,0 +1,220 @@
+#:import Factory kivy.factory.Factory
+#class PauseItem is a button with a red outline. I named it so because I originally used it for the PauseMenu but later reused the same styles throughout the game hence it retains that name "PauseItem"
+<OutlineLbl@MyLabel>:
+	outline_color: BASE_RED
+	outline_width: 5
+	
+<Help@Popup>:
+	separator_color: BASE_RED
+	background_color: WHITE
+	title_color: WHITE#BLUE_GREY
+	title: "Help"
+	size_hint_y: .7
+	size_hint_x: None
+	width: 400
+	center: Window.center
+	background: 'res/screenbg_1.png'
+	id: hp
+	canvas:
+		Color:
+			rgba: BASE_RED
+		Line:
+			points: self.x,self.y, self.x,self.y+self.height, self.x+self.width,self.y+self.height, self.x+self.width, self.y
+			width: 1.5
+			close: True
+	ScrollView:
+		size_hint_y: 1
+		do_scroll_x: True
+		width: hp.width+8
+		height: hp.height
+		effect_cls: ScrollEffect
+		#top: hp.top
+		MyLabel:
+			text: open("help.txt").read()
+			color: WHITE#BLUE_GREY
+			width: hp.width
+			text_size: self.width, None
+			height: self.texture_size[1]
+			font_size: 23
+			#top: hp.top
+<ExitConfContent@BoxLayout>:
+	orientation: "vertical"
+	MyLabel:
+		text: "Do you want really\nwant to quit?"
+		color: WHITE #BLUE_GREY
+		size_hint_y: 1.4
+	BoxLayout:
+		size_hint_y: .6
+		PauseItem:
+			text: "Stay"
+			on_press: app.exconf.dismiss()
+		PauseItem:
+			text: "Quit"
+			on_press: exit()
+			
+<ExitConf@Help>:
+	size_hint_y: None
+	height: 200
+	width: 300
+	title: "Confirm"
+	content: Factory.ExitConfContent()
+	on_open: app.exconf = self
+	
+<MenuSidePanel@BoxLayout>:
+	size_hint: None, None
+	orientation: 'vertical'
+	PauseItem:
+		text: "[font=fonts/mdicons.ttf]\uF493[/font] Settings"
+		font_size: 22
+		markup: True
+	PauseItem:
+		text: "test"
+#########
+#---------
+#########
+<Menu@Screen>:
+	name: "main-menu"
+	on_enter: quickplaybtn.text = f'[font=fonts/mdicons.ttf]\uF40A[font][size=20]{app.db.getLastUnlockedLevel()}[/size]'
+	canvas.before:
+		Rectangle:
+			source: os.path.join('res','screenbg_1.png')
+			size: root.size
+			pos: root.pos
+		Ellipse:
+			source: os.path.join('res','ball_hexastar.jpeg')
+			size: 100,100
+			pos: self.center_x -50, self.center_y-50
+#	Help:
+#		pos_hint: {'center_x': .5, 'center_y': .5}
+#		size_hint_y: .7
+#		size_hint_x: None
+#		width: 200
+#		id: help
+		
+		
+	MyLabel:
+		font_size: 50
+		center: Window.center
+		text: "Guide the\n\t\tBall!"
+		pos_hint: {'center_x': .5, 'center_y': .8}
+		outline_width: 5
+		outline_color: BASE_RED
+		color: WHITE
+		
+	PauseItem:
+		#text: '\uF684' #hamb
+		#text: '\uF35C' #menu
+		text: '\uF054'
+		id: menu_btn
+		size: 60,50
+		pos_hint: {'top': .97, 'right': .97}
+		font_name: os.path.join(os.path.join(".","fonts"), "mdicons.ttf")
+		size_hint: None, None
+		on_press:
+			root.manager.current = "levels"
+	PauseItem:
+		text: "\uF493"
+		top: menu_btn.y -8
+		pos_hint: {'right': .97}
+		size: menu_btn.size
+		size_hint: None, None
+		font_name: os.path.join(os.path.join(".","fonts"), "mdicons.ttf")
+		on_press:
+			root.manager.current = "settings"
+	PauseItem:
+		size_hint: None, None
+		size: 60, 40
+		font_size: 30
+		top: Window.height -10
+		x: 10
+		pos_hint: {"top":.97, "x":.03}
+		font_name: "fonts/mdicons.ttf"
+		text: '\uF15A' #Close
+		#text: '\uF450' #just here
+		outline_width: 3
+		outline_color: BASE_RED
+		on_press: Factory.ExitConf().open()
+		color: BLUE_GREY
+	
+	BoxLayout:
+		size_hint: None, None
+		size: 210, 90
+		center_x: root.center_x
+		y: 10
+		spacing: 10
+		PauseItem:
+			id: quickplaybtn
+			text: f'[font=fonts/mdicons.ttf]\uF40A[/font][size=20]{app.db.getLastUnlockedLevel()}[/size]' #"Play" icon
+			#font_name: os.path.join(os.path.join(".","fonts"), "mdicons.ttf")
+			font_size: 49
+			outline_color: BASE_RED
+			outline_width: 3
+			markup: True
+			on_press:
+				root.manager.current = "igs"
+				app.game.init_level(app.unlocked_lvls[-1])
+				app.current_level = app.unlocked_lvls[-1]
+				app.restore_play_btn()
+				app._timeleft = app.db.getTimeMaxLimitForLevel(app.current_level)
+				app.timeleft = app._timeleft
+				app.score = 6000 if app._timeleft <15 else 7000 if 15<=app._timeleft <21 else 8000
+		PauseItem:
+			text: "?"
+			font_size: 49
+			font_name: os.path.join('fonts','font_19.ttf')
+			outline_color: BASE_RED
+			outline_width: 3
+			on_press: Factory.Help().open()
+	PauseItem:
+		text: "Clear \ndata"
+		size_hint: None, None
+		size: 85, 60
+		right: root.right -5
+		y: 5
+		on_press:
+			app.db.clearData()
+			quickplaybtn.text = f'[font=fonts/mdicons.ttf]\uF40A[font][size=20]{app.db.getLastUnlockedLevel()}[/size]'
+			del app.unlocked_lvls[1:]
+############
+###---------------------#
+#############
+<StartScreen@Screen>:
+	name: 'start'
+	loading_ind_angle: 0
+	canvas.before:
+		Rectangle:
+			source: os.path.join('res','screenbg_1.png')
+			size: root.size
+			pos: root.pos
+	MyLabel:
+		id: intro_text
+		text: "Guide The\n\t\tBall!"
+		outline_width: 5
+		outline_color: BASE_RED
+		color: WHITE
+		font_size: 55
+		pos_hint: {'center_x':.5, 'center_y':.6}
+	Widget:
+		size: 70,70
+		size_hint: None, None
+		pos: intro_text.x -50, intro_text.y -20
+		id: a_widget
+		canvas:
+			PushMatrix:
+			Rotate:
+				axis: 0,0, 1
+				origin: self.center
+				angle: root.loading_ind_angle
+			Ellipse:
+				size: self.size
+				pos: self.pos
+				source: os.path.join('res', 'ball_hexastar.jpeg')
+			PopMatrix:
+	MyLabel:
+		text: "Loading..."
+		font_size: 39
+		italic: True
+		top: a_widget.y -10
+		pos_hint: {'center_x': .52}
+		outline_color: BASE_RED
+		outline_width: 5

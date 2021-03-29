@@ -1,0 +1,143 @@
+#:set g []
+
+<BMILabel@MyLabel>:
+	#font_name: "Arial"
+	markup: True
+	color: BASE_RED
+	font_size: 30
+	
+<MyCheckBox@Button>:
+	background_down: ""
+	background_normal: ""
+	background_disabled: ""
+	background_color: 0,0,0,0#
+	font_name: "fonts/mdicons.ttf"
+	text: "\uF131" #unmarked
+	size: 50,50
+	text_size: self.size
+	font_size: self.width
+	size_hint: None, None
+	color: BASE_RED
+	checked: False
+	group: g
+	belongsTo: None
+	on_press:
+		self.checked = not self.checked
+		exec('if self not in self.group: self.group.append(self);\nfor cb in self.group:\n\tif cb!=self:cb.checked=False')
+		#self.belongsTo.
+		[lambda :app.db.setCurrentBall(self.belongsTo.name), int][not self.checked]()
+		app.ballname = app.db.getCurrentBall()
+	text: ["\uF131","\uF135"][bool(self.checked)]
+	
+<BallMenuItem@BoxLayout>:
+	size_hint: 1, None
+	spacing: 20
+	height: 130
+	name: "hexastar"
+	src: app.db.getBallInfo(self.name)['src']
+	mass: app.db.getBallInfo(self.name)['mass']
+	friction: app.db.getBallInfo(self.name)['friction']
+	bounciness: app.db.getBallInfo(self.name)['elasticity']
+	canvas:
+		Color:
+			rgb: BASE_RED
+		Line:
+			points: self.x,self.y, self.x,self.y+self.height, self.x+self.width,self.y+self.height, self.x+self.width, self.y
+			width: 2
+			close: True
+	canvas.before:
+		Color:
+			rgb: BLUE_GREY
+		Rectangle:
+			size: self.size
+			pos: self.pos
+	Widget:
+		size: 100, 100
+		size_hint: None, None
+		pos_hint: {'center_y':.5, }
+		x: 20
+		canvas:
+			RenderContext:
+				use_parent_projection: True
+				use_parent_modelview: False
+			Color:
+				rgb: WHITE
+			Ellipse:
+				pos: self.pos
+				size: self.size
+				source: root.src
+	BoxLayout:
+		height: root.height
+		orientation: 'vertical'
+		BMILabel:
+			text: "Mass:  "+str(root.mass)+" "*4+"Name::  "+root.name
+		BMILabel:
+			text: "Friction:  "+str(root.friction)
+		BMILabel:
+			text: "Bounciness:  "+str(root.bounciness)
+	MyCheckBox:
+		on_press: app.db.setCurrentBall(root.name)
+		right: root.right-10
+		y: root.y +10
+		belongsTo: root
+		
+<SettingsScreen@Screen>:
+	name: "settings"
+	canvas.before:
+		Rectangle:
+			size: root.size
+			source: "res/screenbg_1.png"
+		Color:
+			rgba: BLUE_GREY#BASE_RED
+		Rectangle:
+			size: root.width, 60
+			pos: 0, root.top-60
+		RoundedRectangle:
+			size: root.width*.5, 70
+			radius: [0,0,0, 20]
+			pos: root.width*.5, root.top-70
+	PauseItem:
+		markup:True
+		text: "[font=fonts/mdicons.ttf]\uF04D[/font] Back"
+		size: 80, 50
+		size_hint: [None, None]
+		pos: 10, root.top - self.height-5
+		b_outline_color: WHITE
+		on_press:
+			root.manager.current = "main-menu"
+	#ScreenManager:
+	OutlineLbl:
+		text: "Balls"
+		center_x: root.center_x
+		top: root.top -5
+		height: 40
+		font_size: 40
+	ScrollView:
+		effect_cls: ScrollEffect
+		do_scroll_x: False
+		width: root.width*.8
+		height: root.height-75-20
+		pos: (Window.width-self.width)/2, root.top-self.height-75
+		size_hint: None, None
+			#top: lvls_title.y -12
+		bar_margin: -6
+		bar_color: BASE_RED #BLUE_GREY
+		bar_inactive_color: BASE_RED#BLUE_GREY
+		bar_width: 6
+		BoxLayout:
+			size_hint: [1, None]
+			height: len(self.children)*130+len(self.children)*5
+			spacing: 5
+			orientation: 'vertical'
+			BallMenuItem:
+				name: "hexastar"
+			BallMenuItem:
+				name: 'spiky'
+			BallMenuItem:
+				name: 'more-spiky'
+			BallMenuItem:
+				name: 'recycle'
+			BallMenuItem:
+				name: 'glow-green'
+			BallMenuItem:
+				name: 'glow-purple'
