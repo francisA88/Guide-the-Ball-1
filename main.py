@@ -1,5 +1,8 @@
 import kivy
 
+'''Made by Francis Ali. Check out my profile at https://github.com/francisA88'''
+
+
 import sys
 if sys.version_info[:2] not in [(3,6), (3,7)]:
 	raise Exception('This game is only tested with 3.7, should work with 3.6, but not working on later or earlier versions of Python.')
